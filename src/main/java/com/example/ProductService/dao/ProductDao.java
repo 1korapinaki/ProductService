@@ -30,8 +30,14 @@ public class ProductDao {
     // Save product to Redis Hash
     public Product saveProduct(Product product) {
 
+        //template.opsForHash().put(HASH_KEY,product.getId(),product);
+        Product product1 = productRepository.save(product);
+        saveProductToRedis(product1);
+        return product1;
+    }
+    public void saveProductToRedis(Product product)
+    {
         template.opsForHash().put(HASH_KEY,product.getId(),product);
-        return productRepository.save(product);
     }
 
     // Retrieve product by ID
@@ -43,7 +49,7 @@ public class ProductDao {
             if(optionalProduct.isPresent())
             {
                 Product actualProduct=optionalProduct.get();
-                saveProduct(actualProduct);
+                saveProductToRedis(actualProduct);
                 return actualProduct;
             }
             else
